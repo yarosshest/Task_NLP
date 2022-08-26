@@ -2,4 +2,6 @@ tqdm
 wget
 gensim
 ufal.udpipe
+corpy
+IPython
 pyemd

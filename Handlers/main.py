@@ -26,7 +26,8 @@ if __name__ == '__main__':
                     dialogs[-1].append(Message(int(start[1]), start[2], start[3:] + row[1:]))
                 text = start[3:] + row[1:]
                 text = ' '.join(text)
-                if model.check_goodbye(text):
-                    print(text)
+                name = model.get_company(text)
+                if name:
+                    print(name)
 
     pass
