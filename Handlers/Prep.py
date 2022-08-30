@@ -19,7 +19,7 @@ class Prep(object):
         wget.download(self.model_url)
 
     def tag(self, lem_text):
-        lem_text = lem_text.split(' ')
+        lem_text = lem_text.lower().split(' ')
         text = [list(self.model.process(w)) for w in lem_text]
         tagged_words = [s[0].words[1].form + '_' + s[0].words[1].upostag for s in text if s]
 
@@ -28,4 +28,4 @@ class Prep(object):
 
 if __name__ == "__main__":
     prep = Prep()
-    print(prep.tag("Добрый меня максим зовут компания китобизнес удобно говорить"))
+    print(prep.tag("китобизнес"))
