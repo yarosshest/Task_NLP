@@ -1,13 +1,16 @@
 class Message:
     hellow = False
     goodbye = False
-    name = None
-    company = None
+    name = False
+    company = False
 
     def __init__(self, num, role, text):
         self.id = num
         self.role = role
         self.text = text
+
+    def get_data(self):
+        return [self.id, self.role, self.text, self.hellow, self.goodbye, self.name, self.company]
 
     def check(self, model):
         if model.check_hellow(self.text):

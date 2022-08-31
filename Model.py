@@ -2,7 +2,7 @@ import wget
 import zipfile
 import gensim
 import os.path
-from Handlers.Prep import Prep
+from Prep import Prep
 from math import inf
 
 
@@ -19,8 +19,7 @@ def trunc_back(text, length):
 
 
 class Model(object):
-    # model_url = 'http://vectors.nlpl.eu/repository/20/220.zip'
-    model_url = 'http://vectors.nlpl.eu/repository/20/199.zip'
+    model_url = 'http://vectors.nlpl.eu/repository/20/220.zip'
 
     def __init__(self):
         model_file = self.model_url.split('/')[-1]
@@ -81,7 +80,6 @@ class Model(object):
                 if j not in text:
                     flag = False
             res.append(flag)
-        # res = list(map(lambda x: text in x, self.goodbye_text))
         return max(res)
 
     def check_company(self, text):

@@ -1,4 +1,5 @@
-from Handlers.csv_reader import read_csv
+from csv_reader import read_csv
+from csv_get import get_csv
 from Model import Model
 
 if __name__ == '__main__':
@@ -14,4 +15,4 @@ if __name__ == '__main__':
         print(f"Название компании: {dialogs[i].get_company()}")
         print(f"Менеджер попрощался: {dialogs[i].get_goodbye()}")
         print(f"Менеджер поздоровался и попрощался: {dialogs[i].check_HG()}")
-    pass
+    get_csv(dialogs)

@@ -10,7 +10,6 @@ def read_csv():
         header = True
         ids = {}
         dialogs = []
-        model = Model()
         print("Loading data...")
         for row in reader:
             start = row[0].split(',')

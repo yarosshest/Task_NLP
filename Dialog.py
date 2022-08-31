@@ -4,6 +4,15 @@ class Dialog:
         self.client_mes = []
         self.man_mes = []
 
+    def get_messages(self):
+        mes = self.client_mes + self.man_mes
+        mes.sort(key=lambda x: x.id)
+        res = []
+
+        for i in mes:
+            res.append([self.id] + i.get_data())
+        return res
+
     def append(self, message):
         if message.role == "client":
             self.client_mes.append(message)
