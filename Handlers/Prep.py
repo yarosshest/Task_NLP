@@ -9,7 +9,6 @@ class Prep(object):
     model_file = Path(Path(__file__).parent, model_url.split('/')[-1])
 
     def __init__(self):
-
         if not os.path.exists(self.model_file):
             print('\nLoading the model teging')
             self.download()
@@ -28,4 +27,4 @@ class Prep(object):
 
 if __name__ == "__main__":
     prep = Prep()
-    print(prep.tag("китобизнес"))
+    print(prep.tag("всего доброго"))

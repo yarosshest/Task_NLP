@@ -5,14 +5,22 @@ import os.path
 from Handlers.Prep import Prep
 from math import inf
 
-def trunc(text, length):
+
+def trunc_front(text, length):
     text = text.split(" ")[:length]
     text = " ".join(text)
     return text
 
 
+def trunc_back(text, length):
+    text = text.split(" ")[-length:]
+    text = " ".join(text)
+    return text
+
+
 class Model(object):
-    model_url = 'http://vectors.nlpl.eu/repository/20/220.zip'
+    # model_url = 'http://vectors.nlpl.eu/repository/20/220.zip'
+    model_url = 'http://vectors.nlpl.eu/repository/20/199.zip'
 
     def __init__(self):
         model_file = self.model_url.split('/')[-1]
@@ -21,13 +29,16 @@ class Model(object):
             self.download()
         self.model = gensim.models.KeyedVectors.load_word2vec_format('model.bin', binary=True)
         self.prep = Prep()
-        self.welcome_text = ["добрый_ADJ день_NOUN",
-                             "здравствуйте_VERB"]
-        self.introduce_text = ["меня_PRON зовут_VERB",
-                               "да_CCONJ это_PRON максим_NOUN"]
-        self.goodbye_text = ["до_ADP свидания_NOUN",
-                             "всего_PRON хорошего_ADJ до_ADP свидания_NOUN",
-                             "всего_PRON хорошего_ADJ"]
+        self.hellow_text = ["добрый_ADJ день_NOUN",
+                            "здравствуйте_VERB"]
+        self.introduce_text = ["меня_PRON зовут_VERB александр_PROPN",
+                               "да_CCONJ это_PRON александр_PROPN"]
+        self.goodbye_text = ["до_ADP свидания_NOUN".split(" "),
+                             "всего_PRON хорошего_ADJ до_ADP свидания_NOUN".split(" "),
+                             "до_ADP свидания_NOUN хорошего_ADJ вечера_ADV".split(" "),
+                             "все_PRON хорошо_ADV".split(" "),
+                             "всего_PRON доброго_ADV".split(" "),
+                             "всего_PRON хорошего_ADJ".split(" ")]
         self.name_context = ["александр_PROPN",
                              "виктория_PROPN",
                              "сергей_PROPN",
@@ -35,9 +46,9 @@ class Model(object):
                              "максим_NOUN",
                              "валентина_PROPN"]
         self.company_context = ["сбербанк_NOUN",
-                             "торговый_ADJ дом_NOUN копейка_NOUN",
-                             "российский_ADJ алюминий_NOUN",
-                             "национальная_ADJ компьютерная_ADJ корпорация_NOUN",]
+                                "торговый_ADJ дом_NOUN копейка_NOUN",
+                                "российский_ADJ алюминий_NOUN",
+                                "национальная_ADJ компьютерная_ADJ корпорация_NOUN", ]
 
     def download(self):
         model_file = self.model_url.split('/')[-1]
@@ -53,14 +64,25 @@ class Model(object):
         res = list(map(lambda x: self.getDistance(text, x), patterns))
         return min(res)
 
-    def check_welcome(self, text):
-        return self.check_distance(text, self.welcome_text) < 0.7
+    def check_hellow(self, text):
+        return self.check_distance(text, self.hellow_text) < 0.7
 
     def check_introduce(self, text):
-        return self.check_distance(trunc(text, 5), self.introduce_text) < 1.08
+        return self.check_distance(trunc_front(text, 4), self.introduce_text) < 1.5
 
+    # в словаре моделлей нет слов прощания поэтому проверка будет по леммам
     def check_goodbye(self, text):
-        return self.check_distance(text, self.goodbye_text) < 0.5
+        text = trunc_back(text, 4)
+        text = self.prep.tag(text).split(" ")
+        res = []
+        for i in self.goodbye_text:
+            flag = True
+            for j in i:
+                if j not in text:
+                    flag = False
+            res.append(flag)
+        # res = list(map(lambda x: text in x, self.goodbye_text))
+        return max(res)
 
     def check_company(self, text):
         return self.check_distance(text, self.company_context)
@@ -71,7 +93,7 @@ class Model(object):
                 word = word[:word.index("_")]
                 word += "_PROPN"
             if word in self.model.key_to_index:
-                res = list(map(lambda x:  1 - self.model.similarity(word, x, ), context))
+                res = list(map(lambda x: 1 - self.model.similarity(word, x, ), context))
                 res = list(map(lambda x: x if x < gate else inf, res))
                 return min(res)
             else:
@@ -103,21 +125,21 @@ class Model(object):
             else:
                 name = False
 
-            if len(prep_text) -1 < start + 5:
+            if len(prep_text) - 1 < start + 5:
                 length = len(prep_text) - 1
             else:
-                length = start +5
+                length = start + 5
             min = inf
-            for i in range(start, length+1):
-                dist = self.check_company(" ".join(text[start:i+1]))
+            for i in range(start, length + 1):
+                dist = self.check_company(" ".join(text[start:i + 1]))
                 if dist < min:
                     min = dist
                     end = i
 
-            if name and min > 1.30:
+            if name and min > 1.3:
                 return name
-            elif min != inf:
-                return " ".join(text[start:end+1])
+            elif min < 1.1:
+                return " ".join(text[start:end + 1])
             else:
                 return False
         else:
@@ -126,4 +148,4 @@ class Model(object):
 
 if __name__ == '__main__':
     model = Model()
-    print(model.get_company("Добрый меня максим зовут компания китобизнес удобно говорить"))
+    print(model.check_goodbye("Транспортная компания хорошо а у вас уже вот все интеграции сделаны ну то есть там каналы коммуникации от клиентов поступления ледов вот это вот уже сделано или это вы еще только планируете все настраивать"))
