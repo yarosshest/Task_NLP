@@ -10,8 +10,9 @@ class Prep(object):
 
     def __init__(self):
         if not os.path.exists(self.model_file):
-            print('\nLoading the model teging')
+            print('Loading the model teging')
             self.download()
+            print('model teging loaded')
         self.model = crp.Model(str(self.model_file))
 
     def download(self):

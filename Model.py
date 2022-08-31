@@ -26,6 +26,7 @@ class Model(object):
         if not os.path.exists(model_file):
             print("Downloading model...")
             self.download()
+            print("Model downloaded")
         self.model = gensim.models.KeyedVectors.load_word2vec_format('model.bin', binary=True)
         self.prep = Prep()
         self.hellow_text = ["добрый_ADJ день_NOUN",

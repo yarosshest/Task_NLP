@@ -10,7 +10,7 @@ def read_csv():
         header = True
         ids = {}
         dialogs = []
-        print("Loading data...")
+        print("Read csv")
         for row in reader:
             start = row[0].split(',')
             if header:
@@ -23,6 +23,7 @@ def read_csv():
                     dialogs.append(dialog)
                 else:
                     dialogs[-1].append(Message(int(start[1]), start[2], " ".join(start[3:] + row[1:])))
+        print("Read csv done")
     return dialogs
 
 
